@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free AI Audit — Grovia </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+ --cream: #FDFAF4;
+ --cream2: #F4F0E6;
+ --cream3: #EAE4D6;
+ --ink: #17172A;
+ --ink2: #2E2E42;
+ --muted: #6C6C82;
+ --muted2: #9898AE;
+ --green: #00A878;
+ --green2: #00C98E;
+ --green3: #007A58;
+ --gbg: #E8FBF4;
+ --gbd: rgba(0,168,120,0.22);
+ --amber: #F5A623;
+ --abg: #FEF7E8;
+ --red: #E05050;
+ --rbg: #FEF0F0;
+ --border: rgba(23,23,42,0.09);
+ --border2: rgba(23,23,42,0.16);
+ --sh: 0 4px 24px rgba(0,0,0,0.07);
+ --sh2: 0 16px 56px rgba(0,0,0,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+ background:var(--cream);
+ color:var(--ink2);
+ font-family:'Nunito Sans',sans-serif;
+ min-height:100vh;
+ -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--cream2)}
+::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh}
+
+/* ── LEFT PANEL ── */
+.left{
+ width:380px;flex-shrink:0;
+ background:var(--ink);
+ position:sticky;top:0;height:100vh;
+ display:flex;flex-direction:column;
+ padding:36px 36px 32px;
+ overflow:hidden;
+}
+.left-bg{
+ position:absolute;inset:0;
+ background:radial-gradient(ellipse at 20% 80%,rgba(0,168,120,0.12) 0%,transparent 60%),
+ radial-gradient(ellipse at 80% 10%,rgba(155,140,255,0.08) 0%,transparent 50%);
+}
+.left-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column}
+.left-logo{
+ font-family:'DM Serif Display',serif;
+ font-size:22px;color:#fff;margin-bottom:40px;
+}
+.left-logo span{color:var(--green2)}
+.left-heading{
+ font-family:'DM Serif Display',serif;
+ font-size:28px;line-height:1.2;color:#fff;
+ letter-spacing:-0.5px;margin-bottom:12px;
+}
+.left-heading em{color:var(--green2);font-style:italic}
+.left-sub{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.75;margin-bottom:36px}
+
+/* step list */
+.step-list{display:flex;flex-direction:column;gap:0}
+.sl-item{
+ display:flex;gap:14px;align-items:flex-start;
+ padding:12px 0;position:relative;
+}
+.sl-item:not(:last-child)::after{
+ content:'';position:absolute;left:16px;top:40px;
+ width:1px;height:calc(100% - 12px);
+ background:rgba(255,255,255,0.08);
+}
+.sl-dot{
+ width:32px;height:32px;border-radius:9px;flex-shrink:0;
+ display:flex;align-items:center;justify-content:center;
+ font-size:13px;font-weight:700;transition:all 0.3s;
+ background:rgba(255,255,255,0.06);
+ border:1px solid rgba(255,255,255,0.1);
+ color:rgba(255,255,255,0.3);
+}
+.sl-item.active .sl-dot{background:var(--green);border-color:var(--green);color:#fff}
+.sl-item.done .sl-dot{background:rgba(0,201,142,0.2);border-color:rgba(0,201,142,0.3);color:var(--green2)}
+.sl-text h4{font-size:13.5px;font-weight:700;color:rgba(255,255,255,0.35);margin-bottom:2px;transition:color 0.3s}
+.sl-item.active .sl-text h4{color:#fff}
+.sl-item.done .sl-text h4{color:rgba(255,255,255,0.5)}
+.sl-text p{font-size:11.5px;color:rgba(255,255,255,0.22)}
+
+.left-spacer{flex:1}
+.left-footer{
+ background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+ border-radius:12px;padding:16px 18px;
+}
+.lf-items{display:flex;flex-direction:column;gap:8px}
+.lf-item{
+ display:flex;align-items:center;gap:10px;
+ font-size:12.5px;color:rgba(255,255,255,0.4);
+}
+.lf-item span{font-size:16px}
+
+/* ── RIGHT PANEL ── */
+.right{
+ flex:1;
+ display:flex;flex-direction:column;
+ min-height:100vh;
+}
+.right-top{
+ padding:28px 52px 0;
+ display:flex;align-items:center;justify-content:space-between;
+ border-bottom:1px solid var(--border);
+ padding-bottom:20px;
+}
+.progress-track{
+ flex:1;max-width:400px;
+ background:var(--cream3);border-radius:100px;height:4px;overflow:hidden;
+}
+.progress-fill{height:100%;background:var(--green);border-radius:100px;transition:width 0.5s cubic-bezier(0.16,1,0.3,1)}
+.step-count{font-size:13px;color:var(--muted);font-weight:600;margin-left:16px;white-space:nowrap}
+.right-body{
+ flex:1;padding:48px 52px;
+ display:flex;flex-direction:column;
+ max-width:680px;
+}
+
+/* ── FORM STEPS ── */
+.form-step{display:none}
+.form-step.active{display:block;animation:stepIn 0.45s cubic-bezier(0.16,1,0.3,1)}
+@keyframes stepIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+
+.step-eyebrow{
+ font-size:11px;font-weight:700;letter-spacing:2px;
+ text-transform:uppercase;color:var(--green);margin-bottom:10px;
+}
+.step-title{
+ font-family:'DM Serif Display',serif;
+ font-size:clamp(26px,3vw,36px);color:var(--ink);
+ letter-spacing:-0.8px;line-height:1.15;margin-bottom:8px;
+}
+.step-title em{color:var(--green);font-style:italic}
+.step-sub{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:36px;font-weight:400}
+
+/* ── FIELDS ── */
+.field-group{margin-bottom:22px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+label{
+ display:block;font-size:13px;font-weight:700;
+ color:var(--ink);margin-bottom:7px;letter-spacing:0.2px;
+}
+label .req{color:var(--green);margin-left:2px}
+label .opt{color:var(--muted2);font-weight:400;font-size:12px;margin-left:4px}
+
+input[type=text],input[type=email],input[type=tel],input[type=url],
+select,textarea{
+ width:100%;
+ background:#fff;
+ border:1.5px solid var(--border2);
+ border-radius:10px;
+ padding:13px 16px;
+ font-family:'Nunito Sans',sans-serif;
+ font-size:14.5px;color:var(--ink);
+ transition:border-color 0.2s,box-shadow 0.2s;
+ outline:none;
+ appearance:none;
+}
+input::placeholder,textarea::placeholder{color:var(--muted2)}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--green);
+ box-shadow:0 0 0 3px rgba(0,168,120,0.12);
+}
+input.error,select.error,textarea.error{
+ border-color:var(--red);
+ box-shadow:0 0 0 3px rgba(224,80,80,0.1);
+}
+.field-error{font-size:12px;color:var(--red);margin-top:5px;display:none}
+.field-error.show{display:block}
+select{
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236C6C82' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+ background-repeat:no-repeat;background-position:right 14px center;
+ padding-right:42px;cursor:pointer;
+}
+textarea{resize:vertical;min-height:110px;line-height:1.65}
+.char-count{font-size:11.5px;color:var(--muted2);text-align:right;margin-top:4px}
+
+/* ── CHECKBOX / RADIO GROUPS ── */
+.check-group,.radio-group{display:flex;flex-direction:column;gap:8px}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check-item,.radio-item{
+ display:flex;align-items:flex-start;gap:11px;
+ background:#fff;border:1.5px solid var(--border2);
+ border-radius:10px;padding:13px 15px;
+ cursor:pointer;transition:all 0.2s;user-select:none;
+}
+.check-item:hover,.radio-item:hover{border-color:var(--border2);background:var(--cream)}
+.check-item.selected,.radio-item.selected{
+ border-color:var(--green);background:var(--gbg);
+}
+.check-item input,.radio-item input{display:none}
+.check-box{
+ width:20px;height:20px;border-radius:5px;flex-shrink:0;
+ border:2px solid var(--border2);background:#fff;
+ display:flex;align-items:center;justify-content:center;
+ transition:all 0.2s;margin-top:1px;
+}
+.radio-circle{
+ width:20px;height:20px;border-radius:50%;flex-shrink:0;
+ border:2px solid var(--border2);background:#fff;
+ display:flex;align-items:center;justify-content:center;
+ transition:all 0.2s;margin-top:1px;
+}
+.check-item.selected .check-box{background:var(--green);border-color:var(--green)}
+.check-item.selected .check-box::after{content:'✓';color:#fff;font-size:12px;font-weight:800}
+.radio-item.selected .radio-circle{border-color:var(--green)}
+.radio-item.selected .radio-circle::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--green);display:block}
+.check-text,.radio-text{flex:1}
+.check-text h5,.radio-text h5{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.check-text p,.radio-text p{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── SCALE RATING ── */
+.scale-wrap{margin-top:4px}
+.scale-labels{display:flex;justify-content:space-between;margin-bottom:8px}
+.scale-label{font-size:11px;color:var(--muted);font-weight:600}
+.scale-track{display:flex;gap:6px}
+.scale-btn{
+ flex:1;height:36px;border-radius:8px;border:1.5px solid var(--border2);
+ background:#fff;cursor:pointer;font-family:'Nunito Sans',sans-serif;
+ font-size:13px;font-weight:700;color:var(--muted);
+ transition:all 0.15s;
+}
+.scale-btn:hover{border-color:var(--green);color:var(--green)}
+.scale-btn.selected{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ── NAV BUTTONS ── */
+.form-nav{
+ display:flex;align-items:center;justify-content:space-between;
+ margin-top:40px;padding-top:28px;
+ border-top:1px solid var(--border);
+}
+.btn-back{
+ display:flex;align-items:center;gap:8px;
+ font-size:14px;font-weight:700;color:var(--muted);
+ background:none;border:none;cursor:pointer;padding:11px 0;
+ font-family:'Nunito Sans',sans-serif;
+ transition:color 0.2s;
+}
+.btn-back:hover{color:var(--ink)}
+.btn-back:disabled{opacity:0.3;cursor:default}
+.btn-next{
+ display:flex;align-items:center;gap:10px;
+ background:var(--green);color:#fff;
+ font-size:15px;font-weight:800;
+ padding:14px 32px;border-radius:100px;border:none;
+ cursor:pointer;font-family:'Nunito Sans',sans-serif;
+ transition:all 0.2s;letter-spacing:0.2px;
+}
+.btn-next:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,168,120,0.3)}
+.btn-next:active{transform:none}
+
+/* ── DIVIDER ── */
+.section-divider{
+ display:flex;align-items:center;gap:12px;
+ margin:28px 0;
+}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-divider span{font-size:12px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1px}
+
+/* ── CALLOUT ── */
+.form-callout{
+ background:var(--gbg);border:1px solid var(--gbd);
+ border-radius:12px;padding:16px 18px;
+ display:flex;gap:12px;align-items:flex-start;
+ margin-bottom:28px;
+}
+.fc-icon{font-size:20px;margin-top:1px;flex-shrink:0}
+.form-callout p{font-size:13.5px;color:var(--ink2);line-height:1.65}
+.form-callout strong{color:var(--green)}
+
+/* ── SUCCESS SCREEN ── */
+.success-screen{
+ display:none;
+ flex-direction:column;align-items:center;justify-content:center;
+ min-height:100vh;padding:48px 40px;text-align:center;
+ animation:stepIn 0.5s both;
+}
+.success-screen.active{display:flex}
+.success-ring{
+ width:96px;height:96px;border-radius:50%;
+ background:var(--gbg);border:2px solid var(--gbd);
+ display:flex;align-items:center;justify-content:center;
+ font-size:44px;margin-bottom:28px;
+ animation:ringPop 0.6s 0.2s both cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes ringPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.success-screen h2{
+ font-family:'DM Serif Display',serif;font-size:36px;
+ color:var(--ink);letter-spacing:-1px;line-height:1.2;margin-bottom:14px;
+}
+.success-screen h2 em{color:var(--green);font-style:italic}
+.success-screen p{font-size:16px;color:var(--muted);max-width:460px;line-height:1.75;margin-bottom:36px}
+.next-steps{
+ background:var(--cream2);border:1px solid var(--border);
+ border-radius:20px;padding:28px 32px;text-align:left;
+ max-width:500px;width:100%;margin-bottom:28px;
+}
+.ns-title{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:18px}
+.ns-item{
+ display:flex;gap:14px;align-items:flex-start;
+ padding:12px 0;border-bottom:1px solid var(--border);
+}
+.ns-item:last-child{border-bottom:none}
+.ns-dot{
+ width:28px;height:28px;border-radius:8px;flex-shrink:0;
+ background:var(--ink);color:#fff;
+ display:flex;align-items:center;justify-content:center;
+ font-size:12px;font-weight:700;margin-top:1px;
+}
+.ns-item h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.ns-item p{font-size:13px;color:var(--muted);line-height:1.6}
+.success-back{
+ font-size:14px;color:var(--muted);cursor:pointer;
+ background:none;border:none;font-family:'Nunito Sans',sans-serif;
+ text-decoration:underline;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+ .left{display:none}
+ .right-body{padding:32px 24px;max-width:100%}
+ .right-top{padding:20px 24px;padding-bottom:16px}
+ .field-row{grid-template-columns:1fr}
+ .check-grid{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+ .right-body{padding:24px 20px}
+ .scale-track{gap:4px}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+ <!-- ── LEFT PANEL ── -->
+ <aside class="left" id="leftPanel">
+ <div class="left-bg"></div>
+ <div class="left-content">
+ <div class="left-logo">gro<span>via</span></div>
+
+ <div class="left-heading">Your free <em>AI Audit</em> starts here.</div>
+ <div class="left-sub">Five quick steps. No technical knowledge needed. A specialist will confirm your slot within 24 hours.</div>
+
+ <div class="step-list" id="stepList">
+ <div class="sl-item active" data-step="1">
+ <div class="sl-dot">1</div>
+ <div class="sl-text">
+ <h4>Your Business</h4>
+ <p>Industry, size, location</p>
+ </div>
+ </div>
+ <div class="sl-item" data-step="2">
+ <div class="sl-dot">2</div>
+ <div class="sl-text">
+ <h4>Your Details</h4>
+ <p>Contact & preferred language</p>
+ </div>
+ </div>
+ <div class="sl-item" data-step="3">
+ <div class="sl-dot">3</div>
+ <div class="sl-text">
+ <h4>Your Challenges</h4>
+ <p>Pain points & bottlenecks</p>
+ </div>
+ </div>
+ <div class="sl-item" data-step="4">
+ <div class="sl-dot">4</div>
+ <div class="sl-text">
+ <h4>Current Setup</h4>
+ <p>Tools, tech, AI experience</p>
+ </div>
+ </div>
+ <div class="sl-item" data-step="5">
+ <div class="sl-dot">5</div>
+ <div class="sl-text">
+ <h4>Schedule & Submit</h4>
+ <p>Preferred time & final notes</p>
+ </div>
+ </div>
+ </div>
+
+ <div class="left-spacer"></div>
+
+ <div class="left-footer">
+ <div class="lf-items">
+ <div class="lf-item"><span>🔒</span> All information is strictly confidential</div>
+ <div class="lf-item"><span>⏱️</span> Takes less than 5 minutes to complete</div>
+ <div class="lf-item"><span>✅</span> No obligation after the audit</div>
+ <div class="lf-item"><span>🌐</span> Global team · grovia.com</div>
+ </div>
+ </div>
+ </div>
+ </aside>
+
+ <!-- ── RIGHT PANEL ── -->
+ <main class="right">
+ <div class="right-top">
+ <div class="progress-track">
+ <div class="progress-fill" id="progressFill" style="width:20%"></div>
+ </div>
+ <div class="step-count" id="stepCount">Step 1 of 5</div>
+ </div>
+
+ <div class="right-body" id="rightBody">
+
+ <!-- ══ STEP 1: BUSINESS ══ -->
+ <div class="form-step active" id="step1">
+ <div class="step-eyebrow">Step 1 — Your Business</div>
+ <div class="step-title">Tell us about your <em>business.</em></div>
+ <div class="step-sub">We use this to tailor the audit entirely to your industry and operating context.</div>
+
+ <div class="field-group">
+ <label>Business Name <span class="req">*</span></label>
+ <input type="text" id="bizName" placeholder="e.g. Al Noor Trading LLC">
+ <div class="field-error" id="err-bizName">Please enter your business name.</div>
+ </div>
+
+ <div class="field-row">
+ <div class="field-group" style="margin-bottom:0">
+ <label>Industry / Sector <span class="req">*</span></label>
+ <select id="industry">
+ <option value="">Select your industry</option>
+ <option>Real Estate & PropTech</option>
+ <option>E-Commerce & Retail</option>
+ <option>Fintech & Financial Services</option>
+ <option>Healthcare & MedTech</option>
+ <option>Education & EdTech</option>
+ <option>Hospitality & Tourism</option>
+ <option>Logistics & Supply Chain</option>
+ <option>Web3 & Crypto</option>
+ <option>Media & Entertainment</option>
+ <option>Government & Smart City</option>
+ <option>Startups & Venture-Backed</option>
+ <option>Legal & Professional Services</option>
+ <option>Automotive</option>
+ <option>Food & Beverage / Restaurants</option>
+ <option>Other</option>
+ </select>
+ <div class="field-error" id="err-industry">Please select your industry.</div>
+ </div>
+
+ <div class="field-group" style="margin-bottom:0">
+ <label>Country / Region <span class="req">*</span></label>
+ <select id="city">
+ <option value="">Select your country / region</option>
+ <option>United States</option>
+ <option>United Kingdom</option>
+ <option>Canada</option>
+ <option>Australia</option>
+ <option>Germany</option>
+ <option>France</option>
+ <option>India</option>
+ <option>Singapore</option>
+ <option>South Africa</option>
+ <option>Nigeria</option>
+ <option>Pakistan</option>
+ <option>Egypt</option>
+ <option>Other — Middle East</option>
+ <option>Other — Asia Pacific</option>
+ <option>Other — Europe</option>
+ <option>Other — Africa</option>
+ <option>Other — Americas</option>
+ </select>
+ <div class="field-error" id="err-city">Please select your location.</div>
+ </div>
+ </div>
+
+ <div class="field-group" style="margin-top:22px">
+ <label>Number of Employees <span class="req">*</span></label>
+ <div class="radio-group" id="empSize">
+ <div class="radio-item" onclick="selectRadio(this,'empSize')">
+ <input type="radio" name="empSize" value="1–5">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>1 – 5 employees</h5><p>Founder-led or very small team</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'empSize')">
+ <input type="radio" name="empSize" value="6–20">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>6 – 20 employees</h5><p>Small team, growing operations</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'empSize')">
+ <input type="radio" name="empSize" value="21–60">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>21 – 60 employees</h5><p>Established SMB</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'empSize')">
+ <input type="radio" name="empSize" value="61–200">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>61 – 200 employees</h5><p>Mid-market business</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'empSize')">
+ <input type="radio" name="empSize" value="200+">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>200+ employees</h5><p>Large organisation</p></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-empSize">Please select your team size.</div>
+ </div>
+
+ <div class="field-row" style="margin-top:22px;margin-bottom:0">
+ <div class="field-group" style="margin-bottom:0">
+ <label>Years in Operation <span class="req">*</span></label>
+ <select id="yearsOp">
+ <option value="">Select</option>
+ <option>Less than 1 year</option>
+ <option>1 – 3 years</option>
+ <option>3 – 7 years</option>
+ <option>7 – 15 years</option>
+ <option>15+ years</option>
+ </select>
+ <div class="field-error" id="err-yearsOp">Please select how long you've been operating.</div>
+ </div>
+ <div class="field-group" style="margin-bottom:0">
+ <label>Business Website <span class="opt">(optional)</span></label>
+ <input type="url" id="website" placeholder="https://yourbusiness.ae">
+ </div>
+ </div>
+
+ <div class="form-nav">
+ <button class="btn-back" disabled>← Back</button>
+ <button class="btn-next" onclick="goNext(1)">Continue → <span>Business Details</span></button>
+ </div>
+ </div>
+
+ <!-- ══ STEP 2: CONTACT ══ -->
+ <div class="form-step" id="step2">
+ <div class="step-eyebrow">Step 2 — Your Details</div>
+ <div class="step-title">Who are we<br><em>speaking with?</em></div>
+ <div class="step-sub">Your audit specialist will contact you on these details to confirm and schedule your discovery call.</div>
+
+ <div class="field-row">
+ <div class="field-group" style="margin-bottom:0">
+ <label>Full Name <span class="req">*</span></label>
+ <input type="text" id="fullName" placeholder="Your full name">
+ <div class="field-error" id="err-fullName">Please enter your full name.</div>
+ </div>
+ <div class="field-group" style="margin-bottom:0">
+ <label>Your Role / Title <span class="req">*</span></label>
+ <select id="jobRole">
+ <option value="">Select your role</option>
+ <option>Founder / CEO</option>
+ <option>Co-Founder</option>
+ <option>Managing Director / GM</option>
+ <option>Operations Director / Manager</option>
+ <option>Marketing Director / Manager</option>
+ <option>Sales Director / Manager</option>
+ <option>IT / Technology Lead</option>
+ <option>Finance Director / CFO</option>
+ <option>Department Head</option>
+ <option>Other</option>
+ </select>
+ <div class="field-error" id="err-jobRole">Please select your role.</div>
+ </div>
+ </div>
+
+ <div class="field-row" style="margin-top:22px">
+ <div class="field-group" style="margin-bottom:0">
+ <label>Email Address <span class="req">*</span></label>
+ <input type="email" id="email" placeholder="you@yourbusiness.ae">
+ <div class="field-error" id="err-email">Please enter a valid email address.</div>
+ </div>
+ <div class="field-group" style="margin-bottom:0">
+ <label>WhatsApp Number <span class="req">*</span></label>
+ <input type="tel" id="whatsapp" placeholder="+1 234 567 8900">
+ <div class="field-error" id="err-whatsapp">Please enter your WhatsApp number.</div>
+ </div>
+ </div>
+
+ <div class="section-divider"><span>Preferences</span></div>
+
+ <div class="field-group">
+ <label>Preferred Language for the Call <span class="req">*</span></label>
+ <div class="radio-group" id="language" style="flex-direction:row;gap:10px">
+ <div class="radio-item" onclick="selectRadio(this,'language')" style="flex:1">
+ <input type="radio" name="language" value="English">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>English</h5></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'language')" style="flex:1">
+ <input type="radio" name="language" value="Arabic">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Arabic</h5></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'language')" style="flex:1">
+ <input type="radio" name="language" value="Either">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Either</h5></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-language">Please select your preferred language.</div>
+ </div>
+
+ <div class="field-group">
+ <label>How did you find out about this? <span class="req">*</span></label>
+ <select id="howFound">
+ <option value="">Select</option>
+ <option>Facebook Ad</option>
+ <option>Instagram Ad</option>
+ <option>LinkedIn</option>
+ <option>Google Search</option>
+ <option>Referral / Word of Mouth</option>
+ <option>Grovia website</option>
+ <option>Other</option>
+ </select>
+ <div class="field-error" id="err-howFound">Please let us know how you found us.</div>
+ </div>
+
+ <div class="form-nav">
+ <button class="btn-back" onclick="goPrev(2)">← Back</button>
+ <button class="btn-next" onclick="goNext(2)">Continue → <span>Your Challenges</span></button>
+ </div>
+ </div>
+
+ <!-- ══ STEP 3: CHALLENGES ══ -->
+ <div class="form-step" id="step3">
+ <div class="step-eyebrow">Step 3 — Your Challenges</div>
+ <div class="step-title">What's holding<br>your business <em>back?</em></div>
+ <div class="step-sub">Be as honest as possible — the more specific you are, the more targeted your audit report will be.</div>
+
+ <div class="form-callout">
+ <div class="fc-icon">💡</div>
+ <p>Select <strong>everything that applies</strong> — there are no wrong answers. This is not a test. The more you share, the more valuable your report.</p>
+ </div>
+
+ <div class="field-group">
+ <label>Which of these challenges are you currently facing? <span class="req">*</span></label>
+ <div class="check-grid" id="challenges">
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="slow_response">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Slow customer response times</h5><p>Customers waiting hours for replies</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="leads_lost">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Leads not followed up properly</h5><p>Enquiries going cold or forgotten</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="manual_data">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Excessive manual data entry</h5><p>Hours lost on repetitive input tasks</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="no_data">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>No visibility into business data</h5><p>Running without real-time dashboards</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="key_person">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Over-reliance on key people</h5><p>Business stops if someone is absent</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="scale">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Can't scale without more hires</h5><p>Growth is limited by team capacity</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="inconsistent_cx">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Inconsistent customer experience</h5><p>Quality varies by person or day</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="admin">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Heavy admin and paperwork load</h5><p>Invoices, reports, forms eating time</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="marketing">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Inconsistent or ineffective marketing</h5><p>No time or system for regular content</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="onboarding">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Slow and costly staff onboarding</h5><p>New hires take months to be productive</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="scheduling">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Appointment / booking management</h5><p>Manual scheduling causing errors and delays</p></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="competition">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Falling behind competitors</h5><p>Larger players outpacing us on speed and service</p></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-challenges">Please select at least one challenge.</div>
+ </div>
+
+ <div class="field-group" style="margin-top:28px">
+ <label>Which single area consumes the most time in your business? <span class="req">*</span></label>
+ <select id="biggestTimeDrain">
+ <option value="">Select one area</option>
+ <option>Customer queries and communication</option>
+ <option>Sales follow-up and lead management</option>
+ <option>Administrative tasks and data entry</option>
+ <option>Finance, invoicing and payments</option>
+ <option>HR, hiring and onboarding</option>
+ <option>Inventory and supply chain management</option>
+ <option>Marketing and content creation</option>
+ <option>Reporting and data analysis</option>
+ <option>Scheduling and appointments</option>
+ </select>
+ <div class="field-error" id="err-biggestTimeDrain">Please select the biggest time drain.</div>
+ </div>
+
+ <div class="field-group">
+ <label>Describe your biggest day-to-day operational bottleneck <span class="req">*</span></label>
+ <textarea id="bottleneck" placeholder="e.g. Every morning we spend 2 hours manually copying orders from WhatsApp into our spreadsheet. By the time we're done, new orders have come in and we're always behind..." maxlength="500"></textarea>
+ <div class="char-count"><span id="bottleneckCount">0</span>/500</div>
+ <div class="field-error" id="err-bottleneck">Please describe your main bottleneck (at least 20 characters).</div>
+ </div>
+
+ <div class="form-nav">
+ <button class="btn-back" onclick="goPrev(3)">← Back</button>
+ <button class="btn-next" onclick="goNext(3)">Continue → <span>Current Setup</span></button>
+ </div>
+ </div>
+
+ <!-- ══ STEP 4: CURRENT SETUP ══ -->
+ <div class="form-step" id="step4">
+ <div class="step-eyebrow">Step 4 — Current Setup</div>
+ <div class="step-title">What tools and tech<br>do you currently <em>use?</em></div>
+ <div class="step-sub">Understanding your existing setup helps us identify where AI can plug in immediately — versus where a fresh implementation is needed.</div>
+
+ <div class="field-group">
+ <label>Which tools or platforms does your business currently use? <span class="req">*</span></label>
+ <div class="check-grid" id="tools">
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="whatsapp_biz">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>WhatsApp Business</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="instagram_fb">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Instagram / Facebook Pages</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="crm">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>CRM (Salesforce, HubSpot, Zoho…)</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="accounting">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Accounting software (QuickBooks, Xero…)</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="erp">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>ERP system (SAP, Oracle, Odoo…)</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="ecommerce">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>E-commerce platform (Shopify, WooCommerce…)</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="pm_tools">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Project management (Notion, Asana, Trello…)</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="booking">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Booking / scheduling software</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="custom_sw">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Custom-built software / internal system</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="excel_only">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Mainly Excel / Google Sheets</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="paper">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Mostly paper-based / manual</h5></div>
+ </div>
+ <div class="check-item" onclick="toggleCheck(this)">
+ <input type="checkbox" value="other_tools">
+ <div class="check-box"></div>
+ <div class="check-text"><h5>Other tools not listed</h5></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-tools">Please select at least one option.</div>
+ </div>
+
+ <div class="field-group" style="margin-top:28px">
+ <label>Have you explored or used AI tools before? <span class="req">*</span></label>
+ <div class="radio-group" id="aiExp">
+ <div class="radio-item" onclick="selectRadio(this,'aiExp')">
+ <input type="radio" name="aiExp" value="yes_using">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Yes — we currently use AI tools</h5><p>We have something in place already</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'aiExp')">
+ <input type="radio" name="aiExp" value="yes_tried">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Yes — we've tried some but not stuck with them</h5><p>Experimented but nothing is embedded yet</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'aiExp')">
+ <input type="radio" name="aiExp" value="exploring">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>We're exploring — no implementation yet</h5><p>Aware but haven't started</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'aiExp')">
+ <input type="radio" name="aiExp" value="no">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>No — completely new to AI</h5><p>This is the first step</p></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-aiExp">Please select your AI experience level.</div>
+ </div>
+
+ <div class="field-group">
+ <label>Monthly budget range for software and technology <span class="opt">(approximate)</span></label>
+ <select id="budgetRange">
+ <option value="">Prefer not to say</option>
+ <option>Under $500 / month</option>
+ <option>$500 – $2,000 / month</option>
+ <option>$2,000 – $5,000 / month</option>
+ <option>$5,000 – $15,000 / month</option>
+ <option>$15,000+ / month</option>
+ </select>
+ </div>
+
+ <div class="field-group">
+ <label>How important is implementing AI for your business right now?</label>
+ <div class="scale-wrap">
+ <div class="scale-labels">
+ <span class="scale-label">Not urgent</span>
+ <span class="scale-label">Extremely urgent</span>
+ </div>
+ <div class="scale-track" id="urgencyScale">
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',1)" type="button">1</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',2)" type="button">2</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',3)" type="button">3</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',4)" type="button">4</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',5)" type="button">5</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',6)" type="button">6</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',7)" type="button">7</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',8)" type="button">8</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',9)" type="button">9</button>
+ <button class="scale-btn" onclick="selectScale(this,'urgencyScale',10)" type="button">10</button>
+ </div>
+ </div>
+ </div>
+
+ <div class="form-nav">
+ <button class="btn-back" onclick="goPrev(4)">← Back</button>
+ <button class="btn-next" onclick="goNext(4)">Continue → <span>Schedule</span></button>
+ </div>
+ </div>
+
+ <!-- ══ STEP 5: SCHEDULE ══ -->
+ <div class="form-step" id="step5">
+ <div class="step-eyebrow">Step 5 — Schedule & Submit</div>
+ <div class="step-title">When works best<br>for your <em>discovery call?</em></div>
+ <div class="step-sub">Your Grovia specialist will confirm the exact time within 24 hours on WhatsApp or email.</div>
+
+ <div class="field-group">
+ <label>Preferred days for the call <span class="req">*</span></label>
+ <div class="radio-group" id="callDays" style="flex-direction:row;gap:10px;flex-wrap:wrap">
+ <div class="radio-item" onclick="selectRadio(this,'callDays')" style="flex:1;min-width:140px">
+ <input type="radio" name="callDays" value="Weekdays (Mon–Fri)">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Weekdays</h5><p>Monday – Friday</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'callDays')" style="flex:1;min-width:140px">
+ <input type="radio" name="callDays" value="Weekend (Sat–Sun)">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Weekend</h5><p>Saturday – Sunday</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'callDays')" style="flex:1;min-width:140px">
+ <input type="radio" name="callDays" value="Any day">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Any day</h5><p>Flexible</p></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-callDays">Please select your preferred days.</div>
+ </div>
+
+ <div class="field-group">
+ <label>Preferred time of day <span class="req">*</span></label>
+ <div class="radio-group" id="callTime" style="flex-direction:row;gap:10px;flex-wrap:wrap">
+ <div class="radio-item" onclick="selectRadio(this,'callTime')" style="flex:1;min-width:140px">
+ <input type="radio" name="callTime" value="Morning (9am–12pm)">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Morning</h5><p>9:00 AM – 12:00 PM</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'callTime')" style="flex:1;min-width:140px">
+ <input type="radio" name="callTime" value="Afternoon (12pm–5pm)">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Afternoon</h5><p>12:00 PM – 5:00 PM</p></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'callTime')" style="flex:1;min-width:140px">
+ <input type="radio" name="callTime" value="Evening (5pm–8pm)">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>Evening</h5><p>5:00 PM – 8:00 PM</p></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-callTime">Please select a preferred time.</div>
+ </div>
+
+ <div class="field-group">
+ <label>Preferred contact method <span class="req">*</span></label>
+ <div class="radio-group" id="contactMethod" style="flex-direction:row;gap:10px">
+ <div class="radio-item" onclick="selectRadio(this,'contactMethod')" style="flex:1">
+ <input type="radio" name="contactMethod" value="WhatsApp">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>📱 WhatsApp</h5></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'contactMethod')" style="flex:1">
+ <input type="radio" name="contactMethod" value="Email">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>📧 Email</h5></div>
+ </div>
+ <div class="radio-item" onclick="selectRadio(this,'contactMethod')" style="flex:1">
+ <input type="radio" name="contactMethod" value="Phone Call">
+ <div class="radio-circle"></div>
+ <div class="radio-text"><h5>📞 Phone</h5></div>
+ </div>
+ </div>
+ <div class="field-error" id="err-contactMethod">Please select your preferred contact method.</div>
+ </div>
+
+ <div class="field-group">
+ <label>What do you most want to achieve from this audit? <span class="opt">(optional)</span></label>
+ <select id="auditGoal">
+ <option value="">Select a goal</option>
+ <option>Understand where AI can save time</option>
+ <option>Reduce operational costs</option>
+ <option>Improve customer response and experience</option>
+ <option>Scale without hiring more staff</option>
+ <option>Automate repetitive manual tasks</option>
+ <option>Get a technology roadmap for the business</option>
+ <option>Explore AI for a specific department</option>
+ <option>Just curious to see what's possible</option>
+ </select>
+ </div>
+
+ <div class="field-group">
+ <label>Anything else you'd like us to know before the call? <span class="opt">(optional)</span></label>
+ <textarea id="additionalInfo" placeholder="Any context that would help us prepare — specific systems, challenges, recent changes, concerns about AI…" maxlength="600"></textarea>
+ <div class="char-count"><span id="addCount">0</span>/600</div>
+ </div>
+
+ <div class="form-callout" style="margin-top:8px;margin-bottom:0">
+ <div class="fc-icon">🔒</div>
+ <p>By submitting, you confirm that all information is accurate and agree to be contacted by Grovia at the provided details. <strong>Your data is confidential and will never be shared.</strong></p>
+ </div>
+
+ <div class="form-nav">
+ <button class="btn-back" onclick="goPrev(5)">← Back</button>
+ <button class="btn-next" onclick="submitForm()" style="background:var(--green3);font-size:16px;padding:16px 36px">
+ 🚀 Submit My Audit Request
+ </button>
+ </div>
+ </div>
+
+ </div><!-- end right-body -->
+
+ <!-- ══ SUCCESS SCREEN ══ -->
+ <div class="success-screen" id="successScreen">
+ <div class="success-ring">✅</div>
+ <h2>You're all set.<br>Your audit is <em>confirmed.</em></h2>
+ <p>Thank you for submitting your AI Audit request. A Grovia specialist will contact you within <strong>24 hours</strong> on your preferred channel to confirm your discovery call slot.</p>
+
+ <div class="next-steps">
+ <div class="ns-title">What happens next</div>
+ <div class="ns-item">
+ <div class="ns-dot">1</div>
+ <div>
+ <h4>Confirmation within 24 hours</h4>
+ <p>Your specialist will reach out on WhatsApp or email to confirm your 30-minute call slot.</p>
+ </div>
+ </div>
+ <div class="ns-item">
+ <div class="ns-dot">2</div>
+ <div>
+ <h4>Your 30-minute discovery call</h4>
+ <p>A structured conversation about your operations, challenges, and goals. No preparation needed.</p>
+ </div>
+ </div>
+ <div class="ns-item">
+ <div class="ns-dot">3</div>
+ <div>
+ <h4>Your AI Opportunity Report — within 5 days</h4>
+ <p>A personalised, scored report with specific AI recommendations, tool suggestions, and ROI projections built for your business.</p>
+ </div>
+ </div>
+ </div>
+
+ <a href="grovia_landing.html" style="display:inline-block;padding:13px 28px;border-radius:100px;background:var(--gbg);border:1px solid var(--gbd);color:var(--green);font-weight:700;font-size:14px;text-decoration:none;transition:all 0.2s">← Back to the main page</a>
+ </div>
+
+ </main>
+
+</div><!-- end shell -->
+
+<script>
+let currentStep = 1;
+const TOTAL = 5;
+const scaleValues = {};
+
+// ── NAVIGATION ──────────────────────────────────────────────────────────────
+function updateUI(step) {
+ // Steps
+ document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+ const el = document.getElementById('step' + step);
+ if(el) el.classList.add('active');
+
+ // Progress
+ const pct = (step / TOTAL) * 100;
+ document.getElementById('progressFill').style.width = pct + '%';
+ document.getElementById('stepCount').textContent = 'Step ' + step + ' of ' + TOTAL;
+
+ // Left panel step list
+ document.querySelectorAll('.sl-item').forEach(item => {
+ const n = parseInt(item.dataset.step);
+ item.classList.remove('active','done');
+ if(n === step) item.classList.add('active');
+ else if(n < step) item.classList.add('done');
+ });
+
+ // Replace checkmark in done items
+ document.querySelectorAll('.sl-item.done .sl-dot').forEach(d => { d.textContent = '✓'; });
+ document.querySelectorAll('.sl-item:not(.done) .sl-dot').forEach(d => {
+ const n = d.closest('.sl-item').dataset.step;
+ if(parseInt(n) !== step) d.textContent = n;
+ });
+ document.querySelectorAll('.sl-item.active .sl-dot').forEach(d => {
+ d.textContent = step;
+ });
+
+ window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goNext(step) {
+ if(!validateStep(step)) return;
+ currentStep = step + 1;
+ updateUI(currentStep);
+}
+
+function goPrev(step) {
+ currentStep = step - 1;
+ updateUI(currentStep);
+}
+
+// ── VALIDATION ───────────────────────────────────────────────────────────────
+function validateStep(step) {
+ let ok = true;
+
+ if(step === 1) {
+ ok = requireField('bizName') && ok;
+ ok = requireSelect('industry') && ok;
+ ok = requireSelect('city') && ok;
+ ok = requireRadioGroup('empSize') && ok;
+ ok = requireSelect('yearsOp') && ok;
+ }
+ if(step === 2) {
+ ok = requireField('fullName') && ok;
+ ok = requireSelect('jobRole') && ok;
+ ok = requireEmail('email') && ok;
+ ok = requirePhone('whatsapp') && ok;
+ ok = requireRadioGroup('language') && ok;
+ ok = requireSelect('howFound') && ok;
+ }
+ if(step === 3) {
+ ok = requireCheckGroup('challenges') && ok;
+ ok = requireSelect('biggestTimeDrain') && ok;
+ ok = requireMinLength('bottleneck', 20) && ok;
+ }
+ if(step === 4) {
+ ok = requireCheckGroup('tools') && ok;
+ ok = requireRadioGroup('aiExp') && ok;
+ }
+ if(step === 5) {
+ ok = requireRadioGroup('callDays') && ok;
+ ok = requireRadioGroup('callTime') && ok;
+ ok = requireRadioGroup('contactMethod') && ok;
+ }
+ return ok;
+}
+
+function requireField(id) {
+ const el = document.getElementById(id);
+ const err = document.getElementById('err-'+id);
+ const valid = el && el.value.trim().length > 1;
+ el && el.classList.toggle('error', !valid);
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+function requireSelect(id) {
+ const el = document.getElementById(id);
+ const err = document.getElementById('err-'+id);
+ const valid = el && el.value !== '';
+ el && el.classList.toggle('error', !valid);
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+function requireEmail(id) {
+ const el = document.getElementById(id);
+ const err = document.getElementById('err-'+id);
+ const valid = el && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+ el && el.classList.toggle('error', !valid);
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+function requirePhone(id) {
+ const el = document.getElementById(id);
+ const err = document.getElementById('err-'+id);
+ const valid = el && el.value.trim().replace(/[\s\-]/g,'').length >= 9;
+ el && el.classList.toggle('error', !valid);
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+function requireMinLength(id, min) {
+ const el = document.getElementById(id);
+ const err = document.getElementById('err-'+id);
+ const valid = el && el.value.trim().length >= min;
+ el && el.classList.toggle('error', !valid);
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+function requireRadioGroup(groupId) {
+ const grp = document.getElementById(groupId);
+ const err = document.getElementById('err-'+groupId);
+ const selected = grp && grp.querySelector('.radio-item.selected');
+ const valid = !!selected;
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+function requireCheckGroup(groupId) {
+ const grp = document.getElementById(groupId);
+ const err = document.getElementById('err-'+groupId);
+ const selected = grp && grp.querySelector('.check-item.selected');
+ const valid = !!selected;
+ err && err.classList.toggle('show', !valid);
+ return valid;
+}
+
+// ── INTERACTIONS ─────────────────────────────────────────────────────────────
+function toggleCheck(item) {
+ item.classList.toggle('selected');
+ const inp = item.querySelector('input[type=checkbox]');
+ if(inp) inp.checked = item.classList.contains('selected');
+ // clear error
+ const grp = item.closest('[id]');
+ const err = grp && document.getElementById('err-'+grp.id);
+ if(err && item.closest('[id]').querySelector('.check-item.selected')) err.classList.remove('show');
+}
+
+function selectRadio(item, groupId) {
+ const grp = document.getElementById(groupId);
+ grp.querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+ item.classList.add('selected');
+ const inp = item.querySelector('input[type=radio]');
+ if(inp) inp.checked = true;
+ const err = document.getElementById('err-'+groupId);
+ if(err) err.classList.remove('show');
+}
+
+function selectScale(btn, groupId, val) {
+ const track = document.getElementById(groupId);
+ track.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+ btn.classList.add('selected');
+ scaleValues[groupId] = val;
+}
+
+// ── CHAR COUNTS ──────────────────────────────────────────────────────────────
+const bottleneckEl = document.getElementById('bottleneck');
+const bottleneckCount = document.getElementById('bottleneckCount');
+if(bottleneckEl) bottleneckEl.addEventListener('input', () => {
+ bottleneckCount.textContent = bottleneckEl.value.length;
+});
+
+const addInfoEl = document.getElementById('additionalInfo');
+const addCount = document.getElementById('addCount');
+if(addInfoEl) addInfoEl.addEventListener('input', () => {
+ addCount.textContent = addInfoEl.value.length;
+});
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+function submitForm() {
+ if(!validateStep(5)) return;
+
+ // Show success
+ document.getElementById('rightBody').style.display = 'none';
+ document.getElementById('successScreen').classList.add('active');
+ document.getElementById('progressFill').style.width = '100%';
+ document.getElementById('stepCount').textContent = 'Complete ✓';
+ document.querySelectorAll('.sl-item').forEach(item => {
+ item.classList.remove('active');
+ item.classList.add('done');
+ item.querySelector('.sl-dot').textContent = '✓';
+ });
+}
+
+// ── CLEAR ERRORS ON INPUT ────────────────────────────────────────────────────
+document.querySelectorAll('input,select,textarea').forEach(el => {
+ el.addEventListener('input', () => {
+ el.classList.remove('error');
+ const err = document.getElementById('err-'+el.id);
+ if(err) err.classList.remove('show');
+ });
+});
+</script>
+</body>
+</html>
